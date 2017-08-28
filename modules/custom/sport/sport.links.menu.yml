@@ -1,0 +1,6 @@
+sport.form:
+ title: Sport
+ description: link
+ parent: main
+ route_name: sport.form
+ menu_name: main

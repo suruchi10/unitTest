@@ -1,0 +1,8 @@
+sport.form:
+ path: '/sport/form'
+ defaults:
+   _title: 'Favourite Sport And Player'
+   _form: '\Drupal\sport\Form\SportForm'
+ requirements:
+   _permission: 'access content'
+   

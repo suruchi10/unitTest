@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/bootstrap.php" colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutChangesToGlobalState="true"
+         checkForUnintentionallyCoveredCode="false"
+         printer="\Drupal\Tests\Listeners\HtmlOutputPrinter">
+
+<php>
+    <!-- Set error reporting to E_ALL. -->
+    <ini name="error_reporting" value="32767"/>
+    <!-- Do not limit the amount of memory tests take to run. -->
+    <ini name="memory_limit" value="-1"/>
+    <!-- Example SIMPLETEST_BASE_URL value: http://localhost -->
+    <env name="SIMPLETEST_BASE_URL" value="http://drupalhope.dd:8083"/>
+    <!-- Example SIMPLETEST_DB value: mysql://username:password@localhost/databasename#table_prefix--><env name="SIMPLETEST_DB" value="mysql://root:@localhost/drupalhope"/>
+    <!-- Example BROWSERTEST_OUTPUT_DIRECTORY value: /path/to/webroot/sites/simpletest/browser_output -->
+    <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/drupalHope/sites/default/files/simpletest/verbose/* "/>
+  </php>
+    
+   
+  <testsuites>
+    <testsuite name="unit">
+      <directory>../modules/custom/resume/
+        </directory>
+      <file>./tests/Form/ResumeFormUnitTest.php</file> 
+    
+    </testsuite>
+    <!-- <testsuite name="functional">
+     <directory>../modules/custom/resume/
+        </directory>
+      <file>./tests/Functional/ResumeFormTest.php</file>
+     <directory>../modules/custom/sport/
+        </directory> 
+         <file>./tests/Functional/SportFormTest.php</file>
+    </testsuite> -->
+     </testsuites>
+      <listeners>
+    <listener class="\Drupal\Tests\Listeners\DrupalStandardsListener">
+    </listener>
+  </listeners>
+</phpunit>

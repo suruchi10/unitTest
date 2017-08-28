@@ -1,0 +1,7 @@
+mockingdrupal.form:
+ path: '/mockingform/my_form'
+ defaults:
+   _title: 'Mocking Form'
+   _form: '\Drupal\mockingdrupal\Form\MockingDrupalForm'
+ requirements:
+   _permission: 'access content'

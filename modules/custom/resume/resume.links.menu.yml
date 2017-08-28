@@ -1,0 +1,6 @@
+resume.form:
+ title: Resume
+ description: link
+ parent: main
+ route_name: resume.form
+ menu_name: main
