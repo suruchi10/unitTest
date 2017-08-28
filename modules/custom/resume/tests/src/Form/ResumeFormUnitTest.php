@@ -165,9 +165,6 @@ protected $container;
 
     $this->formBuilder= new FormBuilder($this->formValidator, $this->formSubmitter, $this->formCache,  $this->moduleHandler, $this->eventDispatcher, $this->requestStack, $this->classResolver, $this->elementInfo,$this->themeManager, $this->csrfToken);
 
-
-    $form =getMockBuilder('Drupal\resume\Form\ResumeForm');
-
     $this->container = new ContainerBuilder();
    $container->set('logger.factory', $logger);
     \Drupal::setContainer($this->container);
@@ -186,6 +183,7 @@ public function testGetFormIdWithString() {
   }
 
   public function testGetFormId() {
+    $form =getMockBuilder('Drupal\resume\Form\ResumeForm');
     $this->$form = $this->formBuilder->getForm($this->form);
     $this->assertEquals('resume_form', $form['#form_id']); 
     
