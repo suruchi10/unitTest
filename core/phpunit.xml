@@ -23,16 +23,18 @@
     <testsuite name="unit">
       <directory>../modules/custom/resume/
         </directory>
+        <file>./tests/Form/ConvertTest.php</file> 
       <file>./tests/Form/ResumeFormUnitTest.php</file> 
-    
+    <!-- <directory>../modules/custom/mockingdrupal/
+        </directory> -->
     </testsuite>
-    <!-- <testsuite name="functional">
+     <testsuite name="functional">
      <directory>../modules/custom/resume/
         </directory>
       <file>./tests/Functional/ResumeFormTest.php</file>
-     <directory>../modules/custom/sport/
+     <!-- <directory>../modules/custom/sport/
         </directory> 
-         <file>./tests/Functional/SportFormTest.php</file>
+         <file>./tests/Functional/SportFormTest.php</file> -->
     </testsuite> -->
      </testsuites>
       <listeners>
