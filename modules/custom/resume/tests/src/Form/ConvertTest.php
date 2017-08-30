@@ -4,7 +4,7 @@
  * @file
  * Contains \Drupal\Tests\resume\Unit\ConvertTest.
  */
-namespace Drupal\Tests\resume\Unit;
+namespace Drupal\Tests\resume\Form;
 use Drupal\Tests\UnitTestCase;
 
 /**

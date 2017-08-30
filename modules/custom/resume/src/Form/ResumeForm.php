@@ -74,11 +74,6 @@ class ResumeForm extends FormBase {
 
 
     public function submitForm(array &$form, FormStateInterface $form_state) {
-
-    //   foreach ($form_state->getValues() as $key => $value) {
-    //    drupal_set_message($key . ': ' . $value);
-    // }
-
 		  
      
      drupal_set_message($this->t('@name Thanks for Submitng Form !', array('@name' => $form_state->getValue('candidate_name'))));

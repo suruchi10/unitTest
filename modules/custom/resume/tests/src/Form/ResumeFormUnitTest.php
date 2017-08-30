@@ -5,23 +5,15 @@
  */
 namespace Drupal\Tests\resume\Form;
 
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Tests\UnitTestCase;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormBuilder;
-use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Form\FormBase;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\AccountProxyInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\Tests\UnitTestCase;
-use Drupal\Core\Url;
 
 
 /**
@@ -31,161 +23,91 @@ use Drupal\Core\Url;
 
 class ResumeFormUnitTest extends UnitTestCase {
 
-/**
-   * The form builder being tested.
-   *
-   * @var \Drupal\resume\Form\ResumeForm
-   */
-  protected $formBuilder;
-
-  protected $formValidator; 
-  protected $formSubmitter;
-
-  /**
-   * The CSRF token generator.
-   *
-   * @var \Drupal\Core\Access\CsrfTokenGenerator|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $csrfToken;
-
-  /**
-   * The request.
-   *
-   * @var \Symfony\Component\HttpFoundation\Request
-   */
-  protected $request;
-
-  /**
-   * The request stack.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
-   */
-  protected $requestStack;
-
-  /**
-   * The class results.
-   *
-   * @var \Drupal\Core\DependencyInjection\ClassResolverInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $classResolver;
-
-  /**
-   * The element info manager.
-   *
-   * @var \Drupal\Core\Render\ElementInfoManagerInterface
-   */
-  protected $elementInfo;
-
-  /**
-   * The event dispatcher.
-   *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $eventDispatcher;
-
-  /**
-   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $translationManager;
-
  
-
-  /**
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Psr\Log\LoggerInterface
-   */
+  protected $translationManager;
   protected $logger;
-  protected $formBase;
-  protected $formInterface;
-  protected $formStateInterface;
-  protected $response ;
-
-
-  /**
-   * {@inheritdoc}
-   */
-
-
- /**
-   * The dependency injection container.
-   *
-   * @var \Symfony\Component\DependencyInjection\ContainerBuilder
-   */
-protected $container;
+  protected $form;
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
+    $loggerFactory = $this->getMockBuilder('Drupal\Core\Logger\LoggerChannelFactoryInterface')
+    ->getMock();
+    
+    
+    $stringTranslation = $this->getMockBuilder('Drupal\Core\StringTranslation\TranslationInterface')
+    ->disableOriginalConstructor()
+     ->getMock();
+    
 
-
-// Add functions to the global namespace for testing.
-   // require_once __DIR__ . '/fixtures/form_base_test.inc';
-
-
-    $this->moduleHandler = $this->getMock('Drupal\Core\Extension\ModuleHandlerInterface');
-
-  
-    $this->classResolver = $this->getClassResolverStub();
+       
+    $container = new ContainerBuilder();
+    $container->set('logger.factory', $loggerFactory );
+    $container->set('string_translation',$stringTranslation);
+    \Drupal::setContainer($container);
    
-    $this->elementInfo = $this->getMockBuilder('\Drupal\Core\Render\ElementInfoManagerInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $this->elementInfo->expects($this->any())
-      ->method('getInfo')
-      ->will($this->returnCallback([$this, 'getInfo']));
-
-    $this->csrfToken = $this->getMockBuilder('Drupal\Core\Access\CsrfTokenGenerator')
-      ->disableOriginalConstructor()
-      ->getMock();
-   $this->themeManager = $this->getMock('Drupal\Core\Theme\ThemeManagerInterface');
-    $this->request = new Request();
-    $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-    $this->requestStack = new RequestStack();
-    $this->requestStack->push($this->request);
-    $this->formCache = $this->getMock('Drupal\Core\Form\FormCacheInterface');
-    $this->logger = $this->getMock('Drupal\Core\Logger\LoggerChannelInterface');
-    $this->formBase = $this->getMock('\Drupal\Core\Form\FormBase');
-    $this->formInterface = $this->getMock('\Drupal\Core\Form\FormInterface');
-    $this->formStateInterface = $this->getMock('\Drupal\Core\Form\FormStateInterface');
-    $this->response = $this->getMockBuilder('Symfony\Component\HttpFoundation\Response')
-      ->disableOriginalConstructor()
-      ->getMock();
-    $form_error_handler = $this->getMock('Drupal\Core\Form\FormErrorHandlerInterface');
-    $this->formValidator = $this->getMockBuilder('Drupal\Core\Form\FormValidator')
-      ->setConstructorArgs([$this->requestStack, $this->getStringTranslationStub(), $this->csrfToken, $this->logger, $form_error_handler])
-      ->setMethods(NULL)
-      ->getMock();
-    $this->urlGenerator = $this->getMock('Drupal\Core\Routing\UrlGeneratorInterface');
-
-    $this->formSubmitter = $this->getMockBuilder('Drupal\Core\Form\FormSubmitter')
-      ->setConstructorArgs([$this->requestStack, $this->urlGenerator])
-      ->setMethods(['batchGet', 'drupalInstallationAttempted'])
-      ->getMock();
-
-    $this->formBuilder= new FormBuilder($this->formValidator, $this->formSubmitter, $this->formCache,  $this->moduleHandler, $this->eventDispatcher, $this->requestStack, $this->classResolver, $this->elementInfo,$this->themeManager, $this->csrfToken);
-
-    $this->container = new ContainerBuilder();
-   $container->set('logger.factory', $logger);
-    \Drupal::setContainer($this->container);
-    $this->form = ResumeForm::create($container); 
   }
 
   /**
    * Tests the getFormId() method with a string based form ID.
    */
  
-public function testGetFormIdWithString() {
-    $form_arg = 'foo';
-    $form_state = new FormState();
-    $this->setExpectedException(\InvalidArgumentException::class, 'The form argument foo is not a valid form.');
-    $this->formBuilder->getForm($this->form)->getFormId($form_arg, $form_state);
-  }
+  public function testGetFormID() {
+      // public $form;
+      $form = $this->getMockBuilder(ResumeForm::class) 
+     ->setMethods(['getFormId'])
+     ->getMock();
+     
+     $form->expects($this->any())
+                 ->method('getFormId')
+                 ->willReturn('resume_form');
 
-  public function testGetFormId() {
-    $form =getMockBuilder('Drupal\resume\Form\ResumeForm');
-    $this->$form = $this->formBuilder->getForm($this->form);
-    $this->assertEquals('resume_form', $form['#form_id']); 
-    
-  }
+     $this->assertEquals('resume_form',  $form->getFormId());
+
+ 
+    }
+
+public function testBuildForm() {
+     
+    $state = new FormState();
+  
+    $form = $this->getMockBuilder(ResumeForm::class)
+     ->setMethods(['buildForm'])
+     ->getMock(); 
+    $form->expects($this->any())
+                 ->method('buildForm')
+                 ->willReturn($form) ;   
+
+    $this->assertEquals($form, $form->buildForm($form, $state));
+   
+ }  
+  public function testFormValidation() {
+ 
+     $formBuilder = $this->getMockBuilder('\Drupal\Core\Form\FormBuilderInterface')
+       ->getMock();
+    $form= $formBuilder->getForm($form_obj);
+    $form_obj= new \Drupal\resume\Form\ResumeForm();
+    var_dump($form);       
+
+        $input = ['op' => 'Save',
+               'form_id' => $form_obj->getFormId(),
+               'values' => ['candidate_name'=> 'astha',
+               'candidate_mail'=> 'a@gmail.com',
+               'candidate_number'=> '0123456789',
+                'candidate_dob'=> '17-08-2017',
+                'op' => 'Save'],
+               ]; 
+
+    $state = new FormState();
+    $state
+         ->setUserInput($input)
+         ->setValues($input['values'])
+         ->setFormObject($form_obj)
+         ->setSubmitted(TRUE)
+         ->setProgrammed(TRUE);
+ $form_obj->validateForm($form, $state); 
+ $this->assertEmpty($state->getErrors());        
+ }  
 }
