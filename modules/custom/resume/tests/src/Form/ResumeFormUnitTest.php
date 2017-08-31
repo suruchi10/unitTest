@@ -67,7 +67,7 @@ class ResumeFormUnitTest extends UnitTestCase {
      $this->assertEquals('resume_form',  $form->getFormId());
 
  
-    }
+}
 
 public function testBuildForm() {
      
@@ -112,5 +112,5 @@ public function testBuildForm() {
  }  
 
  // to cheeck
- 
+
 }
